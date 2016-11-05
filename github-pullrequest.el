@@ -36,7 +36,7 @@
            :type "POST"
            :headers '(("Content-Type" . "application/json"))
            :data  (json-encode
-                   (list (cons "title" . (github-pullrequest-name-from-branch (magit-get-current-branch)))
+                   (list (cons "title" (github-pullrequest-name-from-branch (magit-get-current-branch)))
                          (cons "head" (magit-get-current-branch))
                          '("base" . "master")))
            :parser 'json-read
