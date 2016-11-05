@@ -1,5 +1,5 @@
 # github-pullrequest
-Emacs package to smoothly create Github pull requests. 
+Emacs package to smoothly create Github pull requests.
 
 ## Installation
 First clone this repository, then update your emacs configuration file:
