@@ -32,19 +32,21 @@
 
 (defun github-pullrequest-api-new (access-token)
   "Create a Github Pull Request using the current branch as head and master branch as base and ACCESS-TOKEN."
-  (request (concat (github-pullrequest-get-repo-api-base) (concat "pulls?access_token=" access-token))
-           :type "POST"
-           :headers '(("Content-Type" . "application/json"))
-           :data  (json-encode
-                   (list (cons "title" (github-pullrequest-name-from-branch (magit-get-current-branch)))
-                         (cons "head" (magit-get-current-branch))
-                         '("base" . "master")))
-           :parser 'json-read
-           :error (cl-function (lambda (&rest args &key response data error-thrown &allow-other-keys)
-                                 (message "Error creating pull request: %S"
+  (progn
+    (message "Creating PR...")
+    (request (concat (github-pullrequest-get-repo-api-base) (concat "pulls?access_token=" access-token))
+             :type "POST"
+             :headers '(("Content-Type" . "application/json"))
+             :data  (json-encode
+                     (list (cons "title" (github-pullrequest-name-from-branch (magit-get-current-branch)))
+                           (cons "head" (magit-get-current-branch))
+                           '("base" . "master")))
+             :parser 'json-read
+             :error (cl-function (lambda (&rest args &key response data error-thrown &allow-other-keys)
+                                   (message "Error creating pull request: %S"
                                         ;(alist-get 'message (elt (assoc-default 'errors (request-response-data response)) 0))
-                                          (request-response-data response))))
-           :success (cl-function (lambda (&key data response &allow-other-keys) (message "A Pull request was created! %S" (assoc-default 'html_url (request-response-data response)))))))
+                                            (request-response-data response))))
+             :success (cl-function (lambda (&key data response &allow-other-keys) (message "A Pull request was created! %S" (assoc-default 'html_url (request-response-data response))))))))
 
 (defun github-pullrequest-get-repo-api-base ()
   "Get the base API URL of the current repository from magit."
