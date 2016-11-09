@@ -52,10 +52,10 @@
 
 (defun github-pullrequest-get-access-token ()
   "Fetch the users Github access token, either from input or the current repos git config."
-  (let ((token (replace-regexp-in-string "\n" "" (github-pullrequest-run-command "config" "--get" "github.token"))))
+  (let ((token (replace-regexp-in-string "\n" "" (github-pullrequest-run-command "config" "--global" "--get" "github.token"))))
     (if (string= token "")
         (let ((new-token (read-from-minibuffer "Github access-token: ")))
-          (github-pullrequest-run-command "config" "--add" "github.token" new-token)
+          (github-pullrequest-run-command "config" "--global" "--add" "github.token" new-token)
           new-token)
       token)))
 
