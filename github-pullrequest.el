@@ -56,7 +56,7 @@
   (let ((origin (magit-get "remote" "origin" "url")))
     (concat "https://api.github.com/repos"
             (replace-regexp-in-string ".git$" ""
-                                      (cond ((string-match "^http" origin) (replace-regexp-in-string "^https?://github.com" "" ))
+                                      (cond ((string-match "^http" origin) (replace-regexp-in-string "^https?://github.com" "" origin))
                                             (t (concat "/" (replace-regexp-in-string "^git@github.com:" "" origin))))) "/")))
 
 (defun github-pullrequest-get-access-token ()
