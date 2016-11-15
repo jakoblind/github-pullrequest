@@ -49,9 +49,15 @@
                                             (request-response-data response))))
              :success (cl-function (lambda (&key data response &allow-other-keys) (message "A Pull request was created! %S" (assoc-default 'html_url (request-response-data response))))))))
 
+
+
 (defun github-pullrequest-get-repo-api-base ()
   "Get the base API URL of the current repository from magit."
-  (concat "https://api.github.com/repos" (replace-regexp-in-string "^https?://github.com" "" (replace-regexp-in-string ".git$" "" (magit-get "remote" "origin" "url"))) "/"))
+  (let ((origin (magit-get "remote" "origin" "url")))
+    (concat "https://api.github.com/repos"
+            (replace-regexp-in-string ".git$" ""
+                                      (cond ((string-match "^http" origin) (replace-regexp-in-string "^https?://github.com" "" ))
+                                            (t (concat "/" (replace-regexp-in-string "^git@github.com:" "" origin))))) "/")))
 
 (defun github-pullrequest-get-access-token ()
   "Fetch the users Github access token, either from input or the current repos git config."
