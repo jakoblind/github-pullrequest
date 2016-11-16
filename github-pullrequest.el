@@ -4,7 +4,7 @@
 
 ;; Author: Jakob Lind <karl.jakob.lind@gmail.com>
 ;; Keywords: tools
-;; Package-Requires: ((require "0.2.0"))
+;; Package-Requires: ((require "0.2.0") (dash "2.13.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -26,15 +26,43 @@
 ;;; Code:
 
 (require 'request)
+(require 'dash)
 
 (defun github-pullrequest-name-from-branch (branchname)
   "Create a human readable name from BRANCHNAME."
   (replace-regexp-in-string "-" " " branchname))
 
+(defun github-pullrequest--get-existing-list ()
+  "Fetch a list of existing pull request from the current Github repo."
+  (request (concat "https://api.github.com/repos/TeliaSoneraNorge/rapidshop/" (concat "pulls?access_token=" (github-pullrequest-get-access-token)))
+           :type "GET"
+           :headers '(("Content-Type" . "application/json"))
+           :data  (json-encode
+                   (list '("state" . "open")
+                         '("sort" . "created")))
+           :parser 'json-read
+           :error (cl-function (lambda (&rest args &key response data error-thrown &allow-other-keys)
+                                 ;; todo throw error here or something
+                                 (message "Error creating pull request: %S"
+                                        ;(alist-get 'message (elt (assoc-default 'errors (request-response-data response)) 0))
+                                          (request-response-data response))))
+           :success (cl-function (lambda (&key data response &allow-other-keys)
+                                   (github-pullrequest--select-and-checkout
+                                    (--group-by (assoc-default "title" it)  (append (cl-map 'vector (lambda (pr) (list
+                                                                                     (cons "branch" (assoc-default 'label (assoc-default 'head pr)))
+                                                                                     (cons "title" (assoc-default 'title pr))
+                                                                                     (cons "number" (assoc-default 'number pr))))
+                                                                    (request-response-data response)) nil)))))))
+(github-pullrequest--get-existing-list)
+
+(defun github-pullrequest--select-and-checkout (pr-list)
+  "docs"
+  (message "you pick %S" (assoc-default (ido-completing-read "Select a PR to checkout: " (mapcar (lambda (pr) (car pr)) pr-list)) pr-list)))
+
 (defun github-pullrequest-api-new (access-token)
   "Create a Github Pull Request using the current branch as head and master branch as base and ACCESS-TOKEN."
   (progn
-    (message "Creating PR...")
+    (message "Creating pull request...")
     (request (concat (github-pullrequest-get-repo-api-base) (concat "pulls?access_token=" access-token))
              :type "POST"
              :headers '(("Content-Type" . "application/json"))
