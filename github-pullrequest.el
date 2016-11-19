@@ -57,7 +57,9 @@
 
 (defun github-pullrequest--select-and-checkout (pr-list)
   "docs"
-  (message "you pick %S" (assoc-default (ido-completing-read "Select a PR to checkout: " (mapcar (lambda (pr) (car pr)) pr-list)) pr-list)))
+  (let* ((selected-header (ido-completing-read "Select a PR to checkout: " (mapcar #'car pr-list)))
+         (selected-branch (assoc-default "branch" (-flatten (assoc-default selected-header pr-list)))))
+    (message "you pick %S" selected-branch)))
 
 (defun github-pullrequest-api-new (access-token)
   "Create a Github Pull Request using the current branch as head and master branch as base and ACCESS-TOKEN."
