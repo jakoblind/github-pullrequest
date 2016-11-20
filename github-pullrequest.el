@@ -32,9 +32,9 @@
   "Create a human readable name from BRANCHNAME."
   (replace-regexp-in-string "-" " " branchname))
 
-(defun github-pullrequest--get-existing-list ()
+(defun github-pullrequest--get-existing-list (accesstoken)
   "Fetch a list of existing pull request from the current Github repo."
-  (request (concat "https://api.github.com/repos/TeliaSoneraNorge/rapidshop/" (concat "pulls?access_token=" (github-pullrequest-get-access-token)))
+  (request (concat "https://api.github.com/repos/TeliaSoneraNorge/rapidshop/" (concat "pulls?access_token=" accesstoken))
            :type "GET"
            :headers '(("Content-Type" . "application/json"))
            :data  (json-encode
@@ -49,17 +49,19 @@
            :success (cl-function (lambda (&key data response &allow-other-keys)
                                    (github-pullrequest--select-and-checkout
                                     (--group-by (assoc-default "title" it)  (append (cl-map 'vector (lambda (pr) (list
-                                                                                     (cons "branch" (assoc-default 'label (assoc-default 'head pr)))
+                                                                                     (cons "branch" (assoc-default 'ref (assoc-default 'head pr)))
                                                                                      (cons "title" (assoc-default 'title pr))
                                                                                      (cons "number" (assoc-default 'number pr))))
                                                                     (request-response-data response)) nil)))))))
-(github-pullrequest--get-existing-list)
 
 (defun github-pullrequest--select-and-checkout (pr-list)
   "docs"
   (let* ((selected-header (ido-completing-read "Select a PR to checkout: " (mapcar #'car pr-list)))
          (selected-branch (assoc-default "branch" (-flatten (assoc-default selected-header pr-list)))))
-    (message "you pick %S" selected-branch)))
+    (magit-fetch "origin" nil)
+    (magit-branch selected-branch (concat "origin/" selected-branch))
+    (magit-checkout selected-branch)
+    (message "Checked out branch %S" selected-branch)))
 
 (defun github-pullrequest-api-new (access-token)
   "Create a Github Pull Request using the current branch as head and master branch as base and ACCESS-TOKEN."
@@ -104,7 +106,7 @@
     (with-output-to-string
       (apply 'process-file git nil standard-output nil args))))
 
-(defun github-pullrequest-is-validate-state ()
+(defun github-pullrequest-is-validate-state-for-new ()
   "Return t if we are in a valid state to create a PR, return nil otherwise."
   (cond ((string= (magit-get-current-branch) "master")
          (message "You are on master, you can't create a pull request from here") nil)
@@ -112,12 +114,24 @@
          (message "You have not defined an upstream for current branch") nil)
         (t t)))
 
+(defun github-pullrequest-is-validate-state-for-checkout ()
+  "Return t if we are in a valid state to checkout a pull request"
+  ;;todo if we have edited files which are not commited, fail or ask to stash
+  t)
+
 (defun github-pullrequest-new ()
   "Create a new pull request."
   (interactive)
-  (when (github-pullrequest-is-validate-state)
+  (when (github-pullrequest-is-validate-state-for-new)
     (let ((accesstoken (github-pullrequest-get-access-token)))
       (github-pullrequest-api-new accesstoken))))
+
+(defun github-pullrequest-checkout ()
+  "List open pull request and have the user select one to checkout"
+  (interactive)
+  (when (github-pullrequest-is-validate-state-for-checkout)
+    (let ((accesstoken (github-pullrequest-get-access-token)))
+      (github-pullrequest--get-existing-list accesstoken))))
 
 (provide 'github-pullrequest)
 ;;; github-pullrequest.el ends here
