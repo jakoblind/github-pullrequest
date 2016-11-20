@@ -11,6 +11,12 @@ First clone this repository, then update your emacs configuration file:
 
 ## Usage
 
+### Prerequisite
+
+The git repository must have a remote called `origin` which is a github remote.
+
+### New pull request
+
 To create a new pull request:
 
 ```lisp
