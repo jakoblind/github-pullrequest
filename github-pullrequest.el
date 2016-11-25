@@ -34,25 +34,26 @@
 
 (defun github-pullrequest--get-existing-list (accesstoken)
   "Fetch a list of existing pull request from the current Github repo."
-  (request (concat "https://api.github.com/repos/TeliaSoneraNorge/rapidshop/" (concat "pulls?access_token=" accesstoken))
-           :type "GET"
-           :headers '(("Content-Type" . "application/json"))
-           :data  (json-encode
-                   (list '("state" . "open")
-                         '("sort" . "created")))
-           :parser 'json-read
-           :error (cl-function (lambda (&rest args &key response data error-thrown &allow-other-keys)
-                                 ;; todo throw error here or something
-                                 (message "Error creating pull request: %S"
+  (message "Fetching pull requests..."
+           (request (concat "https://api.github.com/repos/TeliaSoneraNorge/rapidshop/" (concat "pulls?access_token=" accesstoken))
+                    :type "GET"
+                    :headers '(("Content-Type" . "application/json"))
+                    :data  (json-encode
+                            (list '("state" . "open")
+                                  '("sort" . "created")))
+                    :parser 'json-read
+                    :error (cl-function (lambda (&rest args &key response data error-thrown &allow-other-keys)
+                                          ;; todo throw error here or something
+                                          (message "Error creating pull request: %S"
                                         ;(alist-get 'message (elt (assoc-default 'errors (request-response-data response)) 0))
-                                          (request-response-data response))))
-           :success (cl-function (lambda (&key data response &allow-other-keys)
-                                   (github-pullrequest--select-and-checkout
-                                    (--group-by (assoc-default "title" it)  (append (cl-map 'vector (lambda (pr) (list
-                                                                                     (cons "branch" (assoc-default 'ref (assoc-default 'head pr)))
-                                                                                     (cons "title" (assoc-default 'title pr))
-                                                                                     (cons "number" (assoc-default 'number pr))))
-                                                                    (request-response-data response)) nil)))))))
+                                                   (request-response-data response))))
+                    :success (cl-function (lambda (&key data response &allow-other-keys)
+                                            (github-pullrequest--select-and-checkout
+                                             (--group-by (assoc-default "title" it)  (append (cl-map 'vector (lambda (pr) (list
+                                                                                                                      (cons "branch" (assoc-default 'ref (assoc-default 'head pr)))
+                                                                                                                      (cons "title" (assoc-default 'title pr))
+                                                                                                                      (cons "number" (assoc-default 'number pr))))
+                                                                                                     (request-response-data response)) nil))))))))
 
 (defun github-pullrequest--select-and-checkout (pr-list)
   "docs"
