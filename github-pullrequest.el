@@ -35,7 +35,7 @@
 (defun github-pullrequest--get-existing-list (accesstoken)
   "Fetch a list of existing pull request from the current Github repo."
   (message "Fetching pull requests..."
-           (request (concat "https://api.github.com/repos/TeliaSoneraNorge/rapidshop/" (concat "pulls?access_token=" accesstoken))
+           (request (concat (github-pullrequest-get-repo-api-base) (concat "pulls?access_token=" accesstoken))
                     :type "GET"
                     :headers '(("Content-Type" . "application/json"))
                     :data  (json-encode
