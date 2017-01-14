@@ -9,7 +9,7 @@ First clone this repository, then update your emacs configuration file:
 (require 'github-pullrequest)
 ```
 
-Use [ido-ubiquitous](https://github.com/DarwinAwardWinner/ido-ubiquitous) to enable IDO
+Use [ido-ubiquitous](https://github.com/DarwinAwardWinner/ido-ubiquitous) to enable IDO.
 
 ## Usage
 
