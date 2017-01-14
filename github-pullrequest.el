@@ -57,7 +57,7 @@
 
 (defun github-pullrequest--select-and-checkout (pr-list)
   "docs"
-  (let* ((selected-header (ido-completing-read "Select a PR to checkout: " (mapcar #'car pr-list)))
+  (let* ((selected-header (completing-read "Select a PR to checkout: " (mapcar #'car pr-list)))
          (selected-branch (assoc-default "branch" (-flatten (assoc-default selected-header pr-list)))))
     (magit-fetch "origin" nil)
     (magit-branch selected-branch (concat "origin/" selected-branch))

@@ -9,6 +9,8 @@ First clone this repository, then update your emacs configuration file:
 (require 'github-pullrequest)
 ```
 
+Use [ido-ubiquitous](https://github.com/DarwinAwardWinner/ido-ubiquitous) to enable IDO
+
 ## Usage
 
 First time you run any command, it will ask for your Github access token. You can create a new access token under [github settings](https://github.com/settings/tokens). It is then saved in your git setting for the current repository under the key `github.token`, so you don't have to enter it next time.
