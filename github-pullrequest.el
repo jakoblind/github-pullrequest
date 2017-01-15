@@ -33,7 +33,7 @@
   (replace-regexp-in-string "-" " " branchname))
 
 (defun github-pullrequest--get-existing-list (accesstoken)
-  "Fetch a list of existing pull request from the current Github repo."
+  "Fetch a list of existing pull request from the current Github repo with ACCESSTOKEN to authenticate aginst github."
   (message "Fetching pull requests..."
            (request (concat (github-pullrequest-get-repo-api-base) (concat "pulls?access_token=" accesstoken))
                     :type "GET"
@@ -56,7 +56,7 @@
                                                                                                      (request-response-data response)) nil))))))))
 
 (defun github-pullrequest--select-and-checkout (pr-list)
-  "docs"
+  "Make user select a pull request from PR-LIST and checkout the brach belonging to selected pull request."
   (let* ((selected-header (completing-read "Select a PR to checkout: " (mapcar #'car pr-list)))
          (selected-branch (assoc-default "branch" (-flatten (assoc-default selected-header pr-list)))))
     (magit-fetch "origin" nil)
@@ -116,7 +116,7 @@
         (t t)))
 
 (defun github-pullrequest-is-validate-state-for-checkout ()
-  "Return t if we are in a valid state to checkout a pull request"
+  "Return t if we are in a valid state to checkout a pull request."
   ;;todo if we have edited files which are not commited, fail or ask to stash
   t)
 
@@ -128,7 +128,7 @@
       (github-pullrequest-api-new accesstoken))))
 
 (defun github-pullrequest-checkout ()
-  "List open pull request and have the user select one to checkout"
+  "List open pull request and have the user select one to checkout."
   (interactive)
   (when (github-pullrequest-is-validate-state-for-checkout)
     (let ((accesstoken (github-pullrequest-get-access-token)))
