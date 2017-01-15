@@ -3,8 +3,10 @@
 ;; Copyright (C) 2016  Jakob Lind
 
 ;; Author: Jakob Lind <karl.jakob.lind@gmail.com>
+;; URL: https://github.com/jakoblind/github-pullrequest
 ;; Keywords: tools
-;; Package-Requires: ((request "0.2.0") (dash "2.13.0"))
+;; Package-Requires: ((emacs "24.4") (request "0.2.0") (dash "2.11.0"))
+;; Version: 1.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
