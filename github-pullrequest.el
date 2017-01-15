@@ -4,7 +4,7 @@
 
 ;; Author: Jakob Lind <karl.jakob.lind@gmail.com>
 ;; Keywords: tools
-;; Package-Requires: ((require "0.2.0") (dash "2.13.0"))
+;; Package-Requires: ((request "0.2.0") (dash "2.13.0"))
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
