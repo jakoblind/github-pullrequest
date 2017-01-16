@@ -5,7 +5,7 @@
 ;; Author: Jakob Lind <karl.jakob.lind@gmail.com>
 ;; URL: https://github.com/jakoblind/github-pullrequest
 ;; Keywords: tools
-;; Package-Requires: ((emacs "24.4") (request "0.2.0") (dash "2.11.0"))
+;; Package-Requires: ((emacs "24.4") (request "0.2.0") (dash "2.11.0") (magit "2.10.0"))
 ;; Version: 1.0
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,8 @@
 
 (require 'request)
 (require 'dash)
+(require 'magit)
+(require 'json)
 
 (defun github-pullrequest-name-from-branch (branchname)
   "Create a human readable name from BRANCHNAME."
