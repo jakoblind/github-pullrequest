@@ -125,6 +125,7 @@
   ;;todo if we have edited files which are not commited, fail or ask to stash
   t)
 
+;;;###autoload
 (defun github-pullrequest-new ()
   "Create a new pull request."
   (interactive)
@@ -132,6 +133,7 @@
     (let ((accesstoken (github-pullrequest-get-access-token)))
       (github-pullrequest-api-new accesstoken))))
 
+;;;###autoload
 (defun github-pullrequest-checkout ()
   "List open pull request and have the user select one to checkout."
   (interactive)
