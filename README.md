@@ -1,5 +1,5 @@
 # github-pullrequest
-Emacs package to smoothly create and checkout Github pull requests. Uses the [Github access token](https://github.com/settings/tokens) for authorization to Github.
+Emacs package to smoothly create and checkout Github pull requests. Uses the [Github access token](https://github.com/settings/tokens) for authorization to Github. This means you can use this package even if your Github account uses [Two-Factor Authentication](https://help.github.com/articles/about-two-factor-authentication/). 
 
 ![Emacs js-import](https://jakoblind.github.io/img/githubcheckout.gif)
 
