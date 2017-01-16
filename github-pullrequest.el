@@ -5,7 +5,7 @@
 ;; Author: Jakob Lind <karl.jakob.lind@gmail.com>
 ;; URL: https://github.com/jakoblind/github-pullrequest
 ;; Keywords: tools
-;; Package-Requires: ((emacs "24.4") (request "0.2.0") (dash "2.11.0"))
+;; Package-Requires: ((emacs "24.4") (request "0.2.0") (dash "2.11.0") (magit "2.10.0"))
 ;; Version: 1.0
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,8 @@
 
 (require 'request)
 (require 'dash)
+(require 'magit)
+(require 'json)
 
 (defun github-pullrequest-name-from-branch (branchname)
   "Create a human readable name from BRANCHNAME."
@@ -37,26 +39,26 @@
 
 (defun github-pullrequest--get-existing-list (accesstoken)
   "Fetch a list of existing pull request from the current Github repo with ACCESSTOKEN to authenticate aginst github."
-  (message "Fetching pull requests..."
-           (request (concat (github-pullrequest-get-repo-api-base) (concat "pulls?access_token=" accesstoken))
-                    :type "GET"
-                    :headers '(("Content-Type" . "application/json"))
-                    :data  (json-encode
-                            (list '("state" . "open")
-                                  '("sort" . "created")))
-                    :parser 'json-read
-                    :error (cl-function (lambda (&rest args &key response data error-thrown &allow-other-keys)
-                                          ;; todo throw error here or something
-                                          (message "Error creating pull request: %S"
+  (message "Fetching pull requests...")
+  (request (concat (github-pullrequest-get-repo-api-base) (concat "pulls?access_token=" accesstoken))
+           :type "GET"
+           :headers '(("Content-Type" . "application/json"))
+           :data  (json-encode
+                   (list '("state" . "open")
+                         '("sort" . "created")))
+           :parser 'json-read
+           :error (cl-function (lambda (&rest args &key response data error-thrown &allow-other-keys)
+                                 ;; todo throw error here or something
+                                 (message "Error creating pull request: %S"
                                         ;(alist-get 'message (elt (assoc-default 'errors (request-response-data response)) 0))
-                                                   (request-response-data response))))
-                    :success (cl-function (lambda (&key data response &allow-other-keys)
-                                            (github-pullrequest--select-and-checkout
-                                             (--group-by (assoc-default "title" it)  (append (cl-map 'vector (lambda (pr) (list
-                                                                                                                      (cons "branch" (assoc-default 'ref (assoc-default 'head pr)))
-                                                                                                                      (cons "title" (assoc-default 'title pr))
-                                                                                                                      (cons "number" (assoc-default 'number pr))))
-                                                                                                     (request-response-data response)) nil))))))))
+                                          (request-response-data response))))
+           :success (cl-function (lambda (&key data response &allow-other-keys)
+                                   (github-pullrequest--select-and-checkout
+                                    (--group-by (assoc-default "title" it)  (append (cl-map 'vector (lambda (pr) (list
+                                                                                                                  (cons "branch" (assoc-default 'ref (assoc-default 'head pr)))
+                                                                                                                  (cons "title" (assoc-default 'title pr))
+                                                                                                                  (cons "number" (assoc-default 'number pr))))
+                                                                                            (request-response-data response)) nil)))))))
 
 (defun github-pullrequest--select-and-checkout (pr-list)
   "Make user select a pull request from PR-LIST and checkout the brach belonging to selected pull request."
