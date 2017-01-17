@@ -4,10 +4,14 @@ Emacs package to smoothly create and checkout Github pull requests. Uses the [Gi
 ![Emacs js-import](https://jakoblind.github.io/img/githubcheckout.gif)
 
 ## Installation
-First clone this repository, then update your emacs configuration file:
+It's available on [MELPA](https://melpa.org/)
 
+```
+M-x package-install js-import
+```
+
+And then add to your Emacs settings
 ```lisp
-(add-to-list 'load-path "~/.emacs.d/github-pullrequest") ;or whatever your path is
 (require 'github-pullrequest)
 ```
 
