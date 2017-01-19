@@ -1,13 +1,13 @@
 # github-pullrequest
 Emacs package to smoothly create and checkout Github pull requests. Uses the [Github access token](https://github.com/settings/tokens) for authorization to Github. This means you can use this package even if your Github account uses [Two-Factor Authentication](https://help.github.com/articles/about-two-factor-authentication/). 
 
-![Emacs js-import](https://jakoblind.github.io/img/githubcheckout.gif)
+![Emacs github-pullrequest](https://jakoblind.github.io/img/githubcheckout.gif)
 
 ## Installation
 It's available on [MELPA](https://melpa.org/)
 
 ```
-M-x package-install js-import
+M-x package-install github-pullrequest
 ```
 
 And then add to your Emacs settings
@@ -31,7 +31,7 @@ The git repository you want to work with must have a remote called `origin` whic
 M-x github-pullrequest-new
 ```
 
-![Emacs js-import](https://jakoblind.github.io/img/githubnewpr.gif)
+![Emacs github-pullrequest](https://jakoblind.github.io/img/githubnewpr.gif)
 
 Creates a pull request with `current branch` as `head` and `master` as `base`. The title of the pull request is the branch name and there is no describing text.
 
@@ -41,6 +41,6 @@ Creates a pull request with `current branch` as `head` and `master` as `base`. T
 M-x github-pullrequest-checkout
 ```
 
-![Emacs js-import](https://jakoblind.github.io/img/githubcheckout.gif)
+![Emacs github-pullrequest](https://jakoblind.github.io/img/githubcheckout.gif)
 
 Lists all open pull requests in current repository. When selecting one of them, the branch for the pull request is checked out, and created if it doesn't exist.
